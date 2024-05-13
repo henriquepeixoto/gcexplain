@@ -1,4 +1,4 @@
-#!/Users/henriquepeixoto/Documents/GitHub/gcexplain/venv/bin/python3.11
+#!/Users/henriquepeixoto/Documents/GitHub/functions.gcexplain/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

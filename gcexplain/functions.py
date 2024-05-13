@@ -56,7 +56,7 @@ class gcexplain():
                                   loss_function, log_transform):
       delta_errors = []
       for all_but_one_auxiliary_output in all_but_one_auxiliary_outputs:
-          error_without_one_feature = gcexplain.gcexplain.get_loss_val(
+          error_without_one_feature = gcexplain.get_loss_val(
               loss_function, y_true, all_but_one_auxiliary_output
           )
 
@@ -78,7 +78,7 @@ class gcexplain():
                             loss_function, log_transform=False):
     delta_errors = []
 
-    error_with_all_features = gcexplain.gcexplain.get_loss_val(loss_function, y_true, auxiliary_outputs)
+    error_with_all_features = gcexplain.get_loss_val(loss_function, y_true, auxiliary_outputs)
     error_without_one_feature = gcexplain.get_loss_val(loss_function, y_true, all_but_one_auxiliary_outputs)
 
 

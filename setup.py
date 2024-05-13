@@ -1,8 +1,8 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='gcexplain',
-    packages=find_packages(include=['gcexplain']),
+    name='functions.gcexplain',
+    packages=find_packages(include=['functions.gcexplain']),
     version='0.1.0',
     description='Library for using Granger causality for Feature Importance Estimation',
     author='Henrique Peixoto Machado',
