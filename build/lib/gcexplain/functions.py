@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Dropout, Input
 from tensorflow.keras.callbacks import EarlyStopping
@@ -16,7 +17,7 @@ from statistics import mean, stdev
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import normalize
 
-class functions.gcexplain():
+class gcexplain():
   def shape_val(val):
     shap = val.shape
     return shap
@@ -25,8 +26,8 @@ class functions.gcexplain():
     return np.finfo(float).eps
 
   def kullback_leibler_divergence(y_true, y_pred):
-      y_true = np.clip(y_true, functions.gcexplain.epsilon(), 1.0)
-      y_pred = np.clip(y_pred, functions.gcexplain.epsilon(), 1.0)
+      y_true = np.clip(y_true, gcexplain.epsilon(), 1.0)
+      y_pred = np.clip(y_pred, gcexplain.epsilon(), 1.0)
       ret_val = np.sum(y_true * np.log(y_true / y_pred), axis=-1)
       return ret_val
 
@@ -35,14 +36,14 @@ class functions.gcexplain():
   def get_loss_val(loss_function, y_true, y_pred):
       ret_val = loss_function(y_true, y_pred)
 
-      if len(functions.gcexplain.shape_val(ret_val)) == 2 and functions.gcexplain.shape_val(ret_val)[-1] == 1:
+      if len(gcexplain.shape_val(ret_val)) == 2 and gcexplain.shape_val(ret_val)[-1] == 1:
           # Value returned by __loss_function__ should be of shape (num_samples,)
           ret_val = np.squeeze(ret_val, axis=-1)
 
-      if len(functions.gcexplain.shape_val(ret_val)) == 0 or (
-              functions.gcexplain.shape_val(ret_val)[0] is not None and
-              functions.gcexplain.shape_val(y_true)[0] is not None and
-              functions.gcexplain.shape_val(ret_val)[0] != functions.gcexplain.shape_val(y_true)[0]
+      if len(gcexplain.shape_val(ret_val)) == 0 or (
+              gcexplain.shape_val(ret_val)[0] is not None and
+              gcexplain.shape_val(y_true)[0] is not None and
+              gcexplain.shape_val(ret_val)[0] != gcexplain.shape_val(y_true)[0]
       ):
           raise ValueError("Your custom loss function must return a scalar for each pair of y_pred and y_true values. "
                           "Please ensure that your loss function does not, for example, average over all samples, "
@@ -55,12 +56,12 @@ class functions.gcexplain():
                                   loss_function, log_transform):
       delta_errors = []
       for all_but_one_auxiliary_output in all_but_one_auxiliary_outputs:
-          error_without_one_feature = get_loss_val(
+          error_without_one_feature = gcexplain.get_loss_val(
               loss_function, y_true, all_but_one_auxiliary_output
           )
 
           # The error without the feature is an indicator as to how potent the left-out feature is as a predictor.
-          delta_error = np.maximum(error_without_one_feature - error_with_all_features, functions.gcexplain.epsilon())
+          delta_error = np.maximum(error_without_one_feature - error_with_all_features, gcexplain.epsilon())
           if log_transform:
               delta_error = np.log(1 + delta_error)
           delta_errors.append(delta_error)
@@ -69,7 +70,7 @@ class functions.gcexplain():
 
   def get_delta_errors(y_true, all_but_one_auxiliary_outputs, error_with_all_features,
                       loss_function, log_transform):
-      return functions.gcexplain.get_delta_errors_fixed_size(y_true, all_but_one_auxiliary_outputs, error_with_all_features,
+      return gcexplain.get_delta_errors_fixed_size(y_true, all_but_one_auxiliary_outputs, error_with_all_features,
                                         loss_function, log_transform)
 
 
@@ -77,25 +78,25 @@ class functions.gcexplain():
                             loss_function, log_transform=False):
     delta_errors = []
 
-    error_with_all_features = get_loss_val(loss_function, y_true, auxiliary_outputs)
-    error_without_one_feature = get_loss_val(loss_function, y_true, all_but_one_auxiliary_outputs)
+    error_with_all_features = gcexplain.get_loss_val(loss_function, y_true, auxiliary_outputs)
+    error_without_one_feature = gcexplain.get_loss_val(loss_function, y_true, all_but_one_auxiliary_outputs)
 
 
     # The error without the feature is an indicator as to how potent the left-out feature is as a predictor.
-    delta_error = np.maximum(error_without_one_feature - error_with_all_features, functions.gcexplain.epsilon())
+    delta_error = np.maximum(error_without_one_feature - error_with_all_features, gcexplain.epsilon())
 
     delta_errors.append(delta_error)
     delta_errors = np.stack(delta_errors, axis=-1)
 
-    shape_result = functions.gcexplain.shape_val(delta_errors)
+    shape_result = gcexplain.shape_val(delta_errors)
     if shape_result is not None and len(shape_result) > 2:
         delta_errors = np.squeeze(delta_errors, axis=-2)
     delta_errors = delta_errors.flatten()
     delta_errors /= (np.sum(delta_errors, axis=-1, keepdims=True))
-    delta_errors = np.clip(delta_errors, functions.gcexplain.epsilon(), 1.0)
-    delta_errors = functions.gcexplain.stop_gradient(delta_errors)
+    delta_errors = np.clip(delta_errors, gcexplain.epsilon(), 1.0)
+    delta_errors = gcexplain.stop_gradient(delta_errors)
 
-    return np.mean(functions.gcexplain.kullback_leibler_divergence(error_without_one_feature, error_with_all_features))
+    return np.mean(gcexplain.kullback_leibler_divergence(error_without_one_feature, error_with_all_features))
 
   def run(model, data, target, n_splits, epochs, loss, categorical):
 
@@ -150,7 +151,7 @@ class functions.gcexplain():
           history = model_without_feature.fit(x_train, y_train_fold, validation_data=(x_test, y_test_fold), epochs = epochs,  verbose=0)
           not_full= model_without_feature.predict(x_test)
 
-          causal = functions.gcexplain.causal_value(y_test_fold.reshape(full.shape), full, not_full, loss)
+          causal = gcexplain.causal_value(y_test_fold.reshape(full.shape), full, not_full, loss)
           di = {'features':i, 'accuracy': history.history['accuracy'][-1], 'loss_x':history.history['loss'], 'causal_value': causal}
           dfc = pd.concat([dfc, pd.DataFrame([di])], ignore_index=True)
 

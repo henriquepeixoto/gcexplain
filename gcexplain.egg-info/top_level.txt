@@ -1,1 +1,1 @@
-functions.gcexplain
+gcexplain

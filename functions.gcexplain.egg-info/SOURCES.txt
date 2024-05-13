@@ -1,7 +1,0 @@
-setup.py
-functions.gcexplain.egg-info/PKG-INFO
-functions.gcexplain.egg-info/SOURCES.txt
-functions.gcexplain.egg-info/dependency_links.txt
-functions.gcexplain.egg-info/requires.txt
-functions.gcexplain.egg-info/top_level.txt
-tests/test_functions.py

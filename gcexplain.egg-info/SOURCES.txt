@@ -1,9 +1,9 @@
 setup.py
-functions.gcexplain/__init__.py
-functions.gcexplain/functions.py
-functions.gcexplain.egg-info/PKG-INFO
-functions.gcexplain.egg-info/SOURCES.txt
-functions.gcexplain.egg-info/dependency_links.txt
-functions.gcexplain.egg-info/requires.txt
-functions.gcexplain.egg-info/top_level.txt
+gcexplain/__init__.py
+gcexplain/functions.py
+gcexplain.egg-info/PKG-INFO
+gcexplain.egg-info/SOURCES.txt
+gcexplain.egg-info/dependency_links.txt
+gcexplain.egg-info/requires.txt
+gcexplain.egg-info/top_level.txt
 tests/test_functions.py

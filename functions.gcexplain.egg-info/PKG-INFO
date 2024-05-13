@@ -1,5 +1,0 @@
-Metadata-Version: 2.1
-Name: functions.gcexplain
-Version: 0.1.1
-Summary: Library for using Granger causality for Feature Importance Estimation
-Author: Henrique Peixoto Machado
